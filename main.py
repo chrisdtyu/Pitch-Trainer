@@ -42,7 +42,7 @@ exit_button.pack(side=TOP,anchor=NE)
 
 # creating a button to hear the pitch middle C for reference  
 def middle_C():
-   pygame.mixer.music.load("C4.mp3")
+   pygame.mixer.music.load("pitches/C4.mp3")
    pygame.mixer.music.play()
 
 reference = Button(window, text="Middle C", font=("Helvetica", 14), command=middle_C,
@@ -78,62 +78,62 @@ def play():
     
     # plays a random note
     if random_note == "A4":
-        pygame.mixer.music.load("A4.mp3")
+        pygame.mixer.music.load("pitches/A4.mp3")
         pygame.mixer.music.play()
         ans = 9
         correct_note.set("A")
     elif random_note == "Ab4":
-        pygame.mixer.music.load("Ab4.mp3")
+        pygame.mixer.music.load("pitches/Ab4.mp3")
         pygame.mixer.music.play()
         ans = 8
         correct_note.set("G#/Ab")
     elif random_note == "B4":
-        pygame.mixer.music.load("B4.mp3")
+        pygame.mixer.music.load("pitches/B4.mp3")
         pygame.mixer.music.play()
         ans = 11
         correct_note.set("B")
     elif random_note == "Bb4":
-        pygame.mixer.music.load("Bb4.mp3")
+        pygame.mixer.music.load("pitches/Bb4.mp3")
         pygame.mixer.music.play()
         ans = 10
         correct_note.set("A#/Bb")
     elif random_note == "C4":
-        pygame.mixer.music.load("C4.mp3")
+        pygame.mixer.music.load("pitches/C4.mp3")
         pygame.mixer.music.play()
         ans = 0
         correct_note.set("C")
     elif random_note == "D4":
-        pygame.mixer.music.load("D4.mp3")
+        pygame.mixer.music.load("pitches/D4.mp3")
         pygame.mixer.music.play()
         ans = 2
         correct_note.set("D")
     elif random_note == "Db4":
-        pygame.mixer.music.load("Db4.mp3")
+        pygame.mixer.music.load("pitches/Db4.mp3")
         pygame.mixer.music.play()
         ans = 1
         correct_note.set("C#/Db")
     elif random_note == "E4":
-        pygame.mixer.music.load("E4.mp3")
+        pygame.mixer.music.load("pitches/E4.mp3")
         pygame.mixer.music.play()
         ans = 4
         correct_note.set("E")
     elif random_note == "Eb4":
-        pygame.mixer.music.load("Eb4.mp3")
+        pygame.mixer.music.load("pitches/Eb4.mp3")
         pygame.mixer.music.play()
         ans = 3
         correct_note.set("D#/Eb")
     elif random_note == "F4":
-        pygame.mixer.music.load("F4.mp3")
+        pygame.mixer.music.load("pitches/F4.mp3")
         pygame.mixer.music.play()
         ans = 5
         correct_note.set("F")
     elif random_note == "G4":
-        pygame.mixer.music.load("G4.mp3")
+        pygame.mixer.music.load("pitches/G4.mp3")
         pygame.mixer.music.play()
         ans = 7
         correct_note.set("G")
     elif random_note == "Gb4":
-        pygame.mixer.music.load("Gb4.mp3")
+        pygame.mixer.music.load("pitches/Gb4.mp3")
         pygame.mixer.music.play()
         ans = 6
         correct_note.set("F#/Gb")
@@ -142,7 +142,7 @@ def play():
 
     # button to hear the same note again
     def again():
-        pygame.mixer.music.load(f"{random_note}.mp3")
+        pygame.mixer.music.load(f"pitches/{random_note}.mp3")
         pygame.mixer.music.play()
 
     play_again = Button(window, text="Listen Again",font=("Helvetica", 24),command=again,
