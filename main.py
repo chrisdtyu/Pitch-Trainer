@@ -1,7 +1,7 @@
 # main.py
 #
 # Author: Christopher Yu
-# Email: cdtyu@uwaterloo.ca
+# Email: chrisdtyu@gmail.com
 #
 # Source code for the pitch trainer.
 
