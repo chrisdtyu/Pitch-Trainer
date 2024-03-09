@@ -15,7 +15,7 @@ from tkinter import *
 window = Tk()
 window.geometry("420x600")
 window.title("Perfect Pitch Trainer")
-window.config(background="#F5F5DC") #F5F5DC
+window.config(background="#F5F5DC")
 window.resizable(False, False)
 
 # creating icon
