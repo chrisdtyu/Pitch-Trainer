@@ -1,6 +1,6 @@
 # Perfect Pitch Trainer
 
-A small desktop app for training your ear. It plays a random note from the middle octave of a piano (C4–B4), and you select the pitch that you heard. 
+A small desktop app for training your ear. It plays a random note on the piano, and you select the pitch that you heard. 
 
 ## Setup
 
