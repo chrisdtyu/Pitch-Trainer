@@ -5,229 +5,215 @@
 #
 # Source code for the pitch trainer.
 
-import pygame 
 import random
-pygame.init()
+import tkinter as tk
+from pathlib import Path
 
-from tkinter import *
+import pygame
 
-# creating window
-window = Tk()
-window.geometry("420x600")
-window.title("Perfect Pitch Trainer")
-window.config(background="#F5F5DC")
-window.resizable(False, False)
+BASE_DIR = Path(__file__).parent
+PITCH_DIR = BASE_DIR / "pitches"
 
-# creating icon
-icon = PhotoImage(file="note.png")
-window.iconphoto(True,icon)
-
-# function to retrieve all child widgets of window
-def all_children(window):
-   _list = window.winfo_children()
-   for item in _list:
-       if item.winfo_children():
-           _list.extend(item.winfo_children())
-   return _list
-
-# function to close the window
-def close():
-  window.destroy()
-  window.quit()
-
-# creating an exit button
-exit_button = Button(window,text="Exit",font=("Helvetica", 12),command=close,fg="white",
-                    bg="red")
-exit_button.pack(side=TOP,anchor=NE)
-
-# creating a button to hear the pitch middle C for reference  
-def middle_C():
-   pygame.mixer.music.load("pitches/C4.mp3")
-   pygame.mixer.music.play()
-
-reference = Button(window, text="Middle C", font=("Helvetica", 14), command=middle_C,
-                  fg="#00FF00",bg="black",activeforeground="#00FF00",activebackground="black")
-reference.pack()
+BEIGE = "#F5F5DC"
+BLACK = "black"
+GREEN = "#00FF00"
+DARK_GREEN = "#007A00"
+RED = "#CC0000"
+TEXT = "#222222"
+HOVER_BG = "#333333"
+DISABLED_BG = "#B5B5A5"
+DISABLED_FG = "#777769"
 
 # list containing all 12 semitones in the middle octave of a piano
-notes = ["A4","Ab4","B4","Bb4","C4","D4","Db4","E4","Eb4","F4","G4","Gb4"]
-ans = int()
+OPTIONS = ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"]
 
-# label indicating that the selected note was correct
-correct_label = Label(window,text="       Correct! \n\nThe note is:",font=("Helvetica", 22),
-                     fg="#00FF00",bg="#F5F5DC",activeforeground="#00FF00",activebackground="#F5F5DC")
+# indexes the pitches 
+NOTES = {
+    "C4": 0, "Db4": 1, "D4": 2, "Eb4": 3, "E4": 4, "F4": 5,
+    "Gb4": 6, "G4": 7, "Ab4": 8, "A4": 9, "Bb4": 10, "B4": 11,
+}
 
-# label indicating that the selected note was correct and to try again
-try_again = Label(window,text="Try again!",font=("Helvetica", 24),
-                 fg="red",bg="#F5F5DC",activeforeground="red",activebackground="#F5F5DC")
-
-# label to display the correct note each time
-correct_note = StringVar()
-show_note = Label(window,textvariable=correct_note,font=("Helvetica", 22),
-                    fg="#00FF00",bg="#F5F5DC",activeforeground="#00FF00",activebackground="#F5F5DC") 
+OPTION_COLUMNS = 4
 
 
-# function that goes through the process of playing a random note, 
-# providing options for the user to select, and handling the user's response
-def play():
-    correct_label.pack_forget()
-    try_again.pack_forget()
-    global ans
-    global random_note
-    random_note = random.choice(notes)
-    
-    # plays a random note
-    if random_note == "A4":
-        pygame.mixer.music.load("pitches/A4.mp3")
-        pygame.mixer.music.play()
-        ans = 9
-        correct_note.set("A")
-    elif random_note == "Ab4":
-        pygame.mixer.music.load("pitches/Ab4.mp3")
-        pygame.mixer.music.play()
-        ans = 8
-        correct_note.set("G#/Ab")
-    elif random_note == "B4":
-        pygame.mixer.music.load("pitches/B4.mp3")
-        pygame.mixer.music.play()
-        ans = 11
-        correct_note.set("B")
-    elif random_note == "Bb4":
-        pygame.mixer.music.load("pitches/Bb4.mp3")
-        pygame.mixer.music.play()
-        ans = 10
-        correct_note.set("A#/Bb")
-    elif random_note == "C4":
-        pygame.mixer.music.load("pitches/C4.mp3")
-        pygame.mixer.music.play()
-        ans = 0
-        correct_note.set("C")
-    elif random_note == "D4":
-        pygame.mixer.music.load("pitches/D4.mp3")
-        pygame.mixer.music.play()
-        ans = 2
-        correct_note.set("D")
-    elif random_note == "Db4":
-        pygame.mixer.music.load("pitches/Db4.mp3")
-        pygame.mixer.music.play()
-        ans = 1
-        correct_note.set("C#/Db")
-    elif random_note == "E4":
-        pygame.mixer.music.load("pitches/E4.mp3")
-        pygame.mixer.music.play()
-        ans = 4
-        correct_note.set("E")
-    elif random_note == "Eb4":
-        pygame.mixer.music.load("pitches/Eb4.mp3")
-        pygame.mixer.music.play()
-        ans = 3
-        correct_note.set("D#/Eb")
-    elif random_note == "F4":
-        pygame.mixer.music.load("pitches/F4.mp3")
-        pygame.mixer.music.play()
-        ans = 5
-        correct_note.set("F")
-    elif random_note == "G4":
-        pygame.mixer.music.load("pitches/G4.mp3")
-        pygame.mixer.music.play()
-        ans = 7
-        correct_note.set("G")
-    elif random_note == "Gb4":
-        pygame.mixer.music.load("pitches/Gb4.mp3")
-        pygame.mixer.music.play()
-        ans = 6
-        correct_note.set("F#/Gb")
-    play_button["state"]=DISABLED
+def play_pitch(name):
+    pygame.mixer.music.load(str(PITCH_DIR / f"{name}.mp3"))
+    pygame.mixer.music.play()
 
 
-    # button to hear the same note again
-    def again():
-        pygame.mixer.music.load(f"pitches/{random_note}.mp3")
-        pygame.mixer.music.play()
+class FlatButton(tk.Label):
+    """A label that behaves like a button.
 
-    play_again = Button(window, text="Listen Again",font=("Helvetica", 24),command=again,
-                        fg="#00FF00",bg="black",activeforeground="#00FF00",activebackground="black")
-    play_again.pack(pady=20)
+    tk.Button ignores background colors on macOS, so this keeps the colors (and the
+    red/green answer highlights) consistent across platforms.
+    """
 
+    def __init__(self, parent, text, command, font, bg=BLACK, fg=GREEN, hover_bg=HOVER_BG,
+                 padx=12, pady=6):
+        super().__init__(parent, text=text, font=font, padx=padx, pady=pady)
+        self.command = command
+        self.base_bg = bg
+        self.base_fg = fg
+        self.hover_bg = hover_bg
+        self.enabled = True
+        self.tone = None  
+        self.hovering = False
 
-    # switches the state of the play button
-    global switch
-    def switch():
-        play_button["state"] = NORMAL
+        self.bind("<Button-1>", self._on_click)
+        self.bind("<Enter>", lambda _: self._set_hover(True))
+        self.bind("<Leave>", lambda _: self._set_hover(False))
+        self._refresh()
 
-    # create set of radiobuttons with the possible options for what note the user just heard 
-    global box
-    def box():
-        for index in range(len(options)):
-            answer = Radiobutton(frame, text=options[index], variable=x, font=("Arial", 10),
-                                    value=index, indicatoron=0, command=choose, fg="#00FF00",
-                                    bg="black", activeforeground="#00FF00", activebackground="black"
-                                    )
-            answer.pack(anchor=W)
+    def set_enabled(self, enabled):
+        self.enabled = enabled
+        self._refresh()
 
-    # button to play another note
-    global next_note
-    def next_note():
-        correct_label.place_forget()
-        show_note.place_forget()
-        play_again.pack_forget()
-        play_button["state"]=NORMAL
-        next.place_forget()
+    def set_tone(self, tone):
+        self.tone = tone
+        self._refresh()
 
-    # button to confirm if the user wants to continue
-    global next
-    next = Button(window, text="Continue", font=("Helvetica", 22), command=next_note,
-                    fg="#00FF00", bg="black", activeforeground="#00FF00", activebackground="black")
+    def _set_hover(self, hovering):
+        self.hovering = hovering
+        self._refresh()
 
-    options = ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"]
+    def _on_click(self, _event):
+        if self.enabled:
+            self.command()
 
-    # function to handle logic of what note the user selects
-    def choose():
-        if (x.get() == ans):
-            try_again.place_forget()
-            correct_label.place(x=125, y=325)
-            show_note.place(x=305,y=391)
-            widget_list = all_children(window)
-            for item in widget_list:
-                item.pack_forget()
-            exit_button.pack(side=TOP, anchor=NE)
-            reference.pack()
-            play_button.pack(pady=20)
-            play_button["state"] = DISABLED
-            play_again.pack(pady=20)
-            next.place(x=160,y=460)
+    def _refresh(self):
+        if self.tone == "correct":
+            bg, fg = DARK_GREEN, "white"
+        elif self.tone == "wrong":
+            bg, fg = RED, "white"
+        elif not self.enabled:
+            bg, fg = DISABLED_BG, DISABLED_FG
         else:
-            correct_label.place_forget()
-            try_again.place(x=160, y=400)
-            window.after(1000,try_again.place_forget)
-            widget_list = all_children(window)
-            for item in widget_list:
-                item.pack_forget()
-            exit_button.pack(side=TOP, anchor=NE)
-            reference.pack()
-            play_button.pack(pady=20)
-            play_again.pack(pady=20)
-            window.after(1000,box)
-
-    x = IntVar()
-
-    frame = Frame(window,bg="#F5F5DC")
-    frame.place(x=25, y=270)
-
-    for index in range(len(options)):
-        answer = Radiobutton(frame, text=options[index], variable=x,font=("Arial",10),
-                                value=index, indicatoron=0, command=choose,fg="#00FF00",
-                                bg="black", activeforeground="#00FF00", activebackground="black"
-                                )
-        answer.pack(anchor=W)
+            bg, fg = (self.hover_bg if self.hovering else self.base_bg), self.base_fg
+        self.config(bg=bg, fg=fg, cursor="hand2" if self.enabled else "arrow")
 
 
+class PitchTrainer:
+    def __init__(self, window):
+        self.window = window
+        self.current_note = None
+        self.awaiting_answer = False
+        self.first_try = True
+        self.correct_count = 0
+        self.total_count = 0
+        self.streak = 0
 
-# button to play a note
-play_button = Button(window, text="Play New Note", font=("Helvetica", 24), command=play,
-                    fg="#00FF00",bg="black",activeforeground="#00FF00",activebackground="black"
-                    )
-play_button.pack(pady=20)
+        window.geometry("420x600")
+        window.title("Perfect Pitch Trainer")
+        window.config(background=BEIGE)
+        window.resizable(False, False)
+        window.iconphoto(True, tk.PhotoImage(file=str(BASE_DIR / "note.png")))
+
+        self._build_widgets()
+
+    def _build_widgets(self):
+        window = self.window
+
+        top_bar = tk.Frame(window, bg=BEIGE)
+        top_bar.pack(fill=tk.X, padx=10, pady=(10, 0))
+        self.score_label = tk.Label(top_bar, font=("Helvetica", 14), fg=TEXT, bg=BEIGE)
+        self.score_label.pack(side=tk.LEFT)
+        FlatButton(top_bar, "Exit", window.destroy, ("Helvetica", 12), bg=RED, fg="white",
+                   hover_bg="#B30000", padx=10, pady=2).pack(side=tk.RIGHT)
+
+        FlatButton(window, "Middle C", lambda: play_pitch("C4"),
+                   ("Helvetica", 14)).pack(pady=(20, 0))
+
+        self.play_button = FlatButton(window, "Play New Note", self.play_new_note,
+                                      ("Helvetica", 24), padx=20, pady=8)
+        self.play_button.pack(pady=(20, 0))
+
+        self.listen_again_button = FlatButton(window, "Listen Again", self.listen_again,
+                                              ("Helvetica", 18))
+        self.listen_again_button.pack(pady=(14, 0))
+        self.listen_again_button.set_enabled(False)
+
+        # feedback line
+        self.status_label = tk.Label(window, font=("Helvetica", 20), fg=TEXT, bg=BEIGE,
+                                     height=2)
+        self.status_label.pack(pady=(14, 0))
+
+        # the 12 answer choices in a grid
+        options_frame = tk.Frame(window, bg=BEIGE)
+        options_frame.pack(pady=(4, 0))
+        self.option_buttons = []
+        for index, label in enumerate(OPTIONS):
+            button = FlatButton(options_frame, label, lambda i=index: self.answer(i),
+                                ("Helvetica", 14), padx=0, pady=8)
+            button.config(width=6)
+            button.set_enabled(False)
+            button.grid(row=index // OPTION_COLUMNS, column=index % OPTION_COLUMNS,
+                        padx=4, pady=4)
+            self.option_buttons.append(button)
+
+        self._update_score()
+        self._set_status("Press Play New Note", TEXT)
+
+    def _set_status(self, text, color):
+        self.status_label.config(text=text, fg=color)
+
+    def _update_score(self):
+        self.score_label["text"] = (f"Score: {self.correct_count}/{self.total_count}"
+                                    f"   Streak: {self.streak}")
+
+    def play_new_note(self):
+        if self.awaiting_answer:
+            return
+        # avoid playing the same note twice in a row
+        self.current_note = random.choice([n for n in NOTES if n != self.current_note])
+        play_pitch(self.current_note)
+
+        self.awaiting_answer = True
+        self.first_try = True
+        for button in self.option_buttons:
+            button.set_tone(None)
+            button.set_enabled(True)
+        self.play_button.set_enabled(False)
+        self.listen_again_button.set_enabled(True)
+        self._set_status("Which note was it?", TEXT)
+
+    def listen_again(self):
+        if self.current_note:
+            play_pitch(self.current_note)
+
+    def answer(self, index):
+        button = self.option_buttons[index]
+        if not self.awaiting_answer or not button.enabled:
+            return
+
+        if index == NOTES[self.current_note]:
+            if self.first_try:
+                self.correct_count += 1
+                self.total_count += 1
+                self.streak += 1
+            button.set_tone("correct")
+            for other in self.option_buttons:
+                other.set_enabled(False)
+            self.awaiting_answer = False
+            self.play_button["text"] = "Next Note"
+            self.play_button.set_enabled(True)
+            self._set_status(f"Correct! The note is {OPTIONS[index]}", DARK_GREEN)
+        else:
+            if self.first_try:
+                self.total_count += 1
+                self.streak = 0
+                self.first_try = False
+            button.set_tone("wrong")
+            button.set_enabled(False)
+            self._set_status("Try again!", RED)
+        self._update_score()
 
 
-window.mainloop()
+def main():
+    pygame.mixer.init()
+    window = tk.Tk()
+    PitchTrainer(window)
+    window.mainloop()
+
+
+if __name__ == "__main__":
+    main()
